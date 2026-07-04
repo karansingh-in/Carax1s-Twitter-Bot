@@ -1,13 +1,10 @@
-import tweepy, random, schedule, time
+import random
+import schedule
+import time
 from data import poll_options, poll_questions, hashtags
-from auth import(
-    consumer_key, consumer_secret, access_token, access_token_secret
-)
+from auth import create_write_client
 
-client = tweepy.Client(
-    consumer_key=consumer_key, consumer_secret=consumer_secret,
-    access_token=access_token, access_token_secret=access_token_secret
-)
+client = create_write_client()
 
 def conduct_polls():
     try:
@@ -22,6 +19,8 @@ def conduct_polls():
     except Exception as e:
         print("Error:", e)
 
-while True:
-    schedule.run_pending()
-    time.sleep(random.randint(5,25))
+if __name__ == "__main__":
+    schedule.every().day.at(f"18:{random.randint(10, 59)}:17").do(conduct_polls)
+    while True:
+        schedule.run_pending()
+        time.sleep(random.randint(5, 25))
