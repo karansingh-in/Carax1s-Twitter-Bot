@@ -1,13 +1,10 @@
-import tweepy, random, schedule, time
-from data import advices, hashtags
-from auth import(
-    consumer_key, consumer_secret, access_token, access_token_secret, bearer_token
-)
+import schedule
+import time
 
-client = tweepy.Client(
-    consumer_key=consumer_key, consumer_secret=consumer_secret,
-    access_token=access_token, access_token_secret=access_token_secret
-)
+from auth import create_write_client
+from compose import build_advice_tweet
+
+client = create_write_client()
 
 # POSTING SOMETHING ----
 # client.create_tweet(text='this is test 3')
@@ -25,17 +22,17 @@ count = int(1)
 def job():
     global count
     try:
-        print('im here')
-        client.create_tweet(text=f'Post {count}\n' + random.choice(advices) + '\n\n' + random.choice(hashtags))
+        client.create_tweet(text=build_advice_tweet(count))
         count += 1
         print("posted something")
     except Exception as e:
         print("Error:", e)
 
 
-schedule.every().day.at("00:16:00").do(job)
-# schedule.every(10).seconds.do(job)
+if __name__ == "__main__":
+    schedule.every().day.at("00:16:00").do(job)
+    # schedule.every(10).seconds.do(job)
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
